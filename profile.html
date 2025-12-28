@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Handcraft Kindness Creation</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
+
+    <style>
+        /* ========================================= */
+        /* --- GLOBAL STYLES --- */
+        /* ========================================= */
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0; padding: 0; padding-top: 70px;
+            background-color: #f9f9f9; color: #333;
+            line-height: 1.6;
+        }
+        :root { --primary: #ff8fa3; --accent: #ff9a9e; --text-dark: #2c2c2c; }
+
+        /* HEADER */
+        header {
+            background: linear-gradient(135deg, #ff9a9e 0%, #ff8fa3 100%);
+            color: white; height: 70px; padding: 0 15px;
+            display: flex; align-items: center; justify-content: space-between;
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+            box-shadow: 0 4px 15px rgba(255, 143, 163, 0.3);
+        }
+        .header-left { display: flex; align-items: center; gap: 10px; }
+        .icon-btn { background: transparent; border: none; color: white; font-size: 20px; cursor: pointer; padding: 5px; display: flex; align-items: center; justify-content: center; text-decoration: none; }
+        .logo { font-size: 24px; font-family: 'Great Vibes', cursive; color: white; text-decoration: none; display: flex; align-items: center; }
+        .logo-img { height: 50px; width: auto; object-fit: contain; }
+        /* Logo Fallback Text Style */
+        .logo-text { display: none; font-size: 28px; white-space: nowrap; }
+
+        /* MAIN CONTENT */
+        .dashboard-container {
+            max-width: 1000px; margin: 30px auto; padding: 0 20px;
+        }
+
+        .welcome-banner {
+            background: white; border-radius: 15px; padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05); margin-bottom: 25px;
+            display: flex; align-items: center; gap: 20px;
+        }
+        .user-avatar {
+            width: 80px; height: 80px; background: #fff0f3; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 30px; color: var(--primary); border: 2px solid var(--primary);
+        }
+        .user-info h1 { margin: 0; font-size: 1.5rem; color: var(--text-dark); }
+        .user-info p { margin: 5px 0 0; color: #666; font-size: 0.9rem; }
+
+        /* GRID LAYOUT */
+        .dashboard-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        /* CARDS */
+        .dash-card {
+            background: white; border-radius: 15px; padding: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+        .dash-card:hover { transform: translateY(-3px); }
+        .card-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 15px; border-bottom: 1px solid #f0f0f0; padding-bottom: 10px;
+        }
+        .card-header h2 { margin: 0; font-size: 1.1rem; color: #333; display: flex; align-items: center; gap: 10px; }
+        .card-header i { color: var(--primary); }
+        .view-all { font-size: 0.8rem; color: var(--primary); text-decoration: none; font-weight: 600; }
+
+        /* Order List */
+        .order-preview-list { list-style: none; padding: 0; margin: 0; }
+        .order-preview-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 0; border-bottom: 1px dashed #eee;
+        }
+        .order-preview-item:last-child { border-bottom: none; }
+        .order-meta strong { display: block; font-size: 0.9rem; color: #333; }
+        .order-meta span { font-size: 0.8rem; color: #888; }
+        .order-status {
+            font-size: 0.75rem; padding: 3px 10px; border-radius: 12px;
+            font-weight: 600; text-transform: uppercase;
+        }
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-paid { background: #d4edda; color: #155724; }
+
+        /* Address Box */
+        .address-box {
+            background: #fafafa; padding: 15px; border-radius: 10px; border: 1px solid #eee;
+            font-size: 0.9rem; color: #555; position: relative;
+        }
+        .address-type {
+            position: absolute; top: 10px; right: 10px;
+            background: #eee; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; text-transform: uppercase;
+        }
+
+        /* Action Buttons */
+        .action-list { display: flex; flex-direction: column; gap: 10px; }
+        .action-btn {
+            display: flex; align-items: center; gap: 15px;
+            background: white; padding: 15px; border-radius: 10px;
+            text-decoration: none; color: #333; border: 1px solid #eee;
+            transition: 0.2s;
+        }
+        .action-btn:hover { border-color: var(--primary); color: var(--primary); background: #fff0f3; }
+        .action-btn.logout { color: #dc3545; border-color: #ffe6e6; }
+        .action-btn.logout:hover { background: #ffe6e6; }
+
+        /* FOOTER */
+        .main-footer {
+            background-color: #222; color: #ddd; padding: 60px 0 20px 0; margin-top: 60px; font-size: 14px;
+        }
+        .footer-container {
+            max-width: 1200px; margin: 0 auto; display: grid;
+            grid-template-columns: 1.5fr 1fr 1fr 1.2fr; gap: 30px; padding: 0 20px;
+        }
+        .footer-col h4 { color: white; margin-bottom: 20px; font-size: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+        .footer-logo { font-family: 'Great Vibes', cursive; font-size: 32px; color: white; text-decoration: none; display: block; margin-bottom: 10px; }
+        .brand-desc { line-height: 1.6; margin-bottom: 20px; opacity: 0.8; }
+        .footer-socials { display: flex; gap: 15px; }
+        .footer-socials a { color: white; background: rgba(255,255,255,0.1); width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: 0.3s; }
+        .footer-socials a:hover { background: var(--primary); transform: translateY(-3px); }
+        .footer-links { list-style: none; padding: 0; }
+        .footer-links li { margin-bottom: 10px; }
+        .footer-links a { color: #ddd; text-decoration: none; transition: 0.3s; }
+        .footer-links a:hover { color: var(--primary); padding-left: 5px; }
+        .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); margin-top: 40px; padding-top: 20px; text-align: center; }
+
+        .newsletter-form { display: flex; background: rgba(255,255,255,0.1); border-radius: 50px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
+        .newsletter-form input { background: transparent; border: none; padding: 12px 20px; color: white; flex: 1; outline: none; font-family: 'Poppins', sans-serif; }
+        .newsletter-form input::placeholder { color: rgba(255,255,255,0.6); }
+        .newsletter-form button { background: var(--primary); border: none; color: white; padding: 0 25px; cursor: pointer; transition: 0.3s; font-size: 16px; }
+        .newsletter-form button:hover { background: white; color: var(--primary); }
+
+        @media (max-width: 768px) {
+            .welcome-banner { flex-direction: column; text-align: center; }
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .footer-container { grid-template-columns: 1fr; text-align: center; gap: 40px; }
+            .footer-socials { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-left">
+            <a href="index.html" class="icon-btn"><i class="fa-solid fa-arrow-left"></i></a> 
+            <a href="index.html" class="logo">
+                <img src="Untitled_design-removebg-preview.png" 
+                     alt="Handcraft Kindness Creation" 
+                     class="logo-img" 
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <span class="logo-text">Handcraft Kindness Creation</span>
+            </a>
+        </div>
+        <div class="header-right">
+            <a href="cart.html" class="icon-btn"><i class="fa-solid fa-cart-shopping"></i></a>
+        </div>
+    </header>
+
+    <div class="dashboard-container">
+        
+        <!-- Welcome Banner -->
+        <div class="welcome-banner">
+            <div class="user-avatar">
+                <i class="fa-solid fa-user"></i>
+            </div>
+            <div class="user-info">
+                <h1 id="userName">Hello, User</h1>
+                <p id="userEmail">user@example.com</p>
+                <p id="userPhone" style="font-size: 0.8rem; color: #aaa;">+91 98765 43210</p>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            
+            <!-- Recent Orders -->
+            <div class="dash-card">
+                <div class="card-header">
+                    <h2><i class="fa-solid fa-box-open"></i> Recent Orders</h2>
+                    <a href="orders.html" class="view-all">View All</a>
+                </div>
+                <ul class="order-preview-list" id="orderList">
+                    <!-- Populated by JS -->
+                    <li class="order-preview-item" style="justify-content: center; color: #999;">Loading...</li>
+                </ul>
+            </div>
+
+            <!-- Saved Address -->
+            <div class="dash-card">
+                <div class="card-header">
+                    <h2><i class="fa-solid fa-location-dot"></i> Default Address</h2>
+                    <a href="address.html" class="view-all">Edit</a>
+                </div>
+                <div id="addressContent">
+                    <!-- Populated by JS -->
+                    <p style="color:#999; font-style:italic;">No address saved.</p>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="dash-card">
+                <div class="card-header">
+                    <h2><i class="fa-solid fa-bolt"></i> Actions</h2>
+                </div>
+                <div class="action-list">
+                    <a href="cart.html" class="action-btn">
+                        <i class="fa-solid fa-cart-shopping"></i> Go to Cart
+                    </a>
+                    <a href="custom_design.html" class="action-btn">
+                        <i class="fa-solid fa-palette"></i> Request Custom Design
+                    </a>
+                    <a href="contact.html" class="action-btn">
+                        <i class="fa-solid fa-headset"></i> Help & Support
+                    </a>
+                    <button onclick="handleLogout()" class="action-btn logout">
+                        <i class="fa-solid fa-right-from-bracket"></i> Logout
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-col brand-col">
+                <a href="#" class="footer-logo">Handcraft Kindness Creation</a>
+                <p class="brand-desc">Handcrafted with premium materials, sustainability, and endless love. Making the world softer, one stitch at a time.</p>
+                <div class="footer-socials">
+                    <a href="https://www.instagram.com/handcraft25_kindness?igsh=MXNzYnNiZzAzbjg1aw==" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://www.facebook.com/share/1Bwh2juEim/" target="_blank"><i class="fa-brands fa-facebook-f"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Shop</h4>
+                <ul class="footer-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="all_products.html">All Products</a></li>
+                    <li><a href="cart.html">My Cart</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Customer Care</h4>
+                <ul class="footer-links">
+                    <li><a href="privacy.html">Privacy & Policy</a></li>
+                    <li><a href="return.html">Return Policy</a></li>
+                    <li><a href="contact.html">Contact Us</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Stay in the Loop</h4>
+                <p class="newsletter-text">Subscribe for exclusive updates & discounts.</p>
+                <form class="newsletter-form" onsubmit="event.preventDefault(); alert('Subscribed!');">
+                    <input type="email" placeholder="Your email address" required>
+                    <button type="submit"><i class="fa-solid fa-paper-plane"></i></button>
+                </form>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Handcraft Kindness Creation. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // --- CONSTANTS ---
+        const AUTH_KEY = 'isLoggedIn';
+        const ADDR_KEY = 'userAddress';
+        const ORDERS_KEY = 'myOrders';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check auth first. If false, we stop execution to avoid DOM errors on wiped body.
+            if (!checkAuth()) return;
+            
+            loadUserProfile();
+            loadRecentOrders();
+        });
+
+        // 1. Auth Check (Returns true if authorized, false if redirecting/failed)
+        function checkAuth() {
+            const isLoggedIn = localStorage.getItem(AUTH_KEY) === 'true';
+            if (!isLoggedIn) {
+                const target = 'login.html?redirect=profile.html';
+                try {
+                    window.location.href = target;
+                } catch (e) {
+                    console.warn("Auto-redirect failed, showing manual link:", e);
+                    // Handle sandbox restriction by replacing content with manual link
+                    document.body.innerHTML = `
+                        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; font-family:sans-serif; text-align:center;">
+                            <h2>Access Restricted</h2>
+                            <p>Please log in to view your profile.</p>
+                            <a href="${target}" style="background:#ff8fa3; color:white; padding:10px 20px; text-decoration:none; border-radius:5px; margin-top:10px;">Go to Login</a>
+                        </div>
+                    `;
+                    return false; // Stop further execution
+                }
+                return false; // Redirect initiated
+            }
+            return true; // Authorized
+        }
+
+        // 2. Load Profile (Simulated from Address data or defaults)
+        function loadUserProfile() {
+            const savedAddr = localStorage.getItem(ADDR_KEY);
+            const userNameEl = document.getElementById('userName');
+            const userEmailEl = document.getElementById('userEmail');
+            const userPhoneEl = document.getElementById('userPhone');
+            const addrContent = document.getElementById('addressContent');
+
+            if (savedAddr) {
+                const data = JSON.parse(savedAddr);
+                
+                // Header Info
+                userNameEl.innerText = data.fullname || "Valued Customer";
+                userEmailEl.innerText = data.email || "No email linked";
+                userPhoneEl.innerText = data.phone ? "+91 " + data.phone : "";
+
+                // Address Card
+                const type = data.address_type || "Home";
+                addrContent.innerHTML = `
+                    <div class="address-box">
+                        <span class="address-type">${type}</span>
+                        <strong>${data.fullname}</strong><br>
+                        ${data.address}<br>
+                        ${data.city}, ${data.state} - ${data.zipcode}<br>
+                        Phone: ${data.phone}
+                    </div>
+                `;
+            } else {
+                userNameEl.innerText = "Welcome!";
+                userEmailEl.innerText = "Please complete your profile";
+                userPhoneEl.innerText = "";
+            }
+        }
+
+        // 3. Load Recent Orders
+        function loadRecentOrders() {
+            const orders = JSON.parse(localStorage.getItem(ORDERS_KEY) || '[]');
+            const list = document.getElementById('orderList');
+            list.innerHTML = '';
+
+            if (orders.length === 0) {
+                list.innerHTML = '<li class="order-preview-item" style="color:#999; justify-content:center;">No orders yet. Start shopping!</li>';
+                return;
+            }
+
+            // Show max 3 items
+            orders.slice(0, 3).forEach(order => {
+                const date = new Date(order.timestamp).toLocaleDateString();
+                const statusClass = order.paid ? 'status-paid' : 'status-pending';
+                const statusText = order.paid ? 'Paid' : 'Pending';
+                
+                const itemHtml = `
+                    <li class="order-preview-item">
+                        <div class="order-meta">
+                            <strong>Order #${order.id}</strong>
+                            <span>${date} • ₹${order.amount}</span>
+                        </div>
+                        <div class="order-status ${statusClass}">
+                            ${statusText}
+                        </div>
+                    </li>
+                `;
+                list.innerHTML += itemHtml;
+            });
+        }
+
+        // 4. Logout
+        function handleLogout() {
+            if(confirm('Are you sure you want to logout?')) {
+                localStorage.setItem(AUTH_KEY, 'false');
+                try {
+                    window.location.href = 'index.html';
+                } catch(e) {
+                    console.warn("Logout redirect fallback");
+                    window.location.assign('index.html');
+                }
+            }
+        }
+    </script>
+</body>
+</html>
