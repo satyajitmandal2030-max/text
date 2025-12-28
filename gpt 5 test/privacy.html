@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy & Policy - Handcraft Kindness Creation</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
+
+    <style>
+        /* ========================================= */
+        /* --- GLOBAL STYLES --- */
+        /* ========================================= */
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0; padding: 0; padding-top: 70px;
+            background-color: #f9f9f9; color: #333;
+            line-height: 1.6;
+        }
+        :root { --primary: #ff8fa3; --accent: #ff9a9e; }
+
+        /* HEADER */
+        header {
+            background: linear-gradient(135deg, #ff9a9e 0%, #ff8fa3 100%);
+            color: white; height: 70px; padding: 0 15px;
+            display: flex; align-items: center; justify-content: space-between;
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+            box-shadow: 0 4px 15px rgba(255, 143, 163, 0.3);
+        }
+        .header-left { display: flex; align-items: center; gap: 10px; }
+        .icon-btn { background: transparent; border: none; color: white; font-size: 20px; cursor: pointer; padding: 5px; display: flex; align-items: center; justify-content: center; text-decoration: none; }
+        .logo { font-size: 24px; font-family: 'Great Vibes', cursive; color: white; text-decoration: none; display: flex; align-items: center; }
+        .logo-img { height: 50px; width: auto; object-fit: contain; }
+
+        /* MAIN CONTENT */
+        .policy-container {
+            max-width: 900px; margin: 40px auto; padding: 0 20px;
+        }
+        .page-title {
+            text-align: center; margin-bottom: 40px;
+        }
+        .page-title h1 {
+            font-size: 2.5rem; margin-bottom: 10px; color: #222;
+        }
+        .page-title p {
+            color: #666; font-size: 1.1rem;
+        }
+
+        /* POLICY SECTIONS */
+        .policy-card {
+            background: white; border-radius: 15px; padding: 30px;
+            margin-bottom: 30px; box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            border-left: 5px solid var(--primary);
+        }
+        .policy-card h2 {
+            margin-top: 0; color: #333; font-size: 1.5rem; display: flex; align-items: center; gap: 10px;
+        }
+        .policy-card h2 i {
+            color: var(--primary); font-size: 1.2rem;
+        }
+        .policy-content p {
+            margin-bottom: 15px; color: #555; text-align: justify;
+        }
+        .policy-content ul {
+            padding-left: 20px; margin-bottom: 15px;
+        }
+        .policy-content li {
+            margin-bottom: 8px; color: #555;
+        }
+
+        /* Highlight Box for No Return */
+        .alert-box {
+            background-color: #fff5f5; border: 1px solid #ffcccc;
+            color: #c0392b; padding: 15px; border-radius: 8px;
+            font-weight: 500; font-size: 0.95rem; margin-top: 20px;
+            display: flex; align-items: flex-start; gap: 10px;
+        }
+
+        /* FOOTER */
+        .main-footer {
+            background-color: #222; color: #ddd; padding: 60px 0 20px 0; margin-top: 60px; font-size: 14px;
+        }
+        .footer-container {
+            max-width: 1200px; margin: 0 auto; display: grid;
+            grid-template-columns: 1.5fr 1fr 1fr 1.2fr; gap: 30px; padding: 0 20px;
+        }
+        .footer-col h4 { color: white; margin-bottom: 20px; font-size: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+        .footer-logo { font-family: 'Great Vibes', cursive; font-size: 32px; color: white; text-decoration: none; display: block; margin-bottom: 10px; }
+        .brand-desc { line-height: 1.6; margin-bottom: 20px; opacity: 0.8; }
+        .footer-socials { display: flex; gap: 15px; }
+        .footer-socials a { color: white; background: rgba(255,255,255,0.1); width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: 0.3s; }
+        .footer-socials a:hover { background: var(--primary); transform: translateY(-3px); }
+        .footer-links { list-style: none; padding: 0; }
+        .footer-links li { margin-bottom: 10px; }
+        .footer-links a { color: #ddd; text-decoration: none; transition: 0.3s; }
+        .footer-links a:hover { color: var(--primary); padding-left: 5px; }
+        .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); margin-top: 40px; padding-top: 20px; text-align: center; }
+
+        /* Newsletter Fixes */
+        .newsletter-text { margin-bottom: 15px; opacity: 0.8; }
+        .newsletter-form { 
+            display: flex; 
+            background: rgba(255,255,255,0.1); 
+            border-radius: 50px; 
+            overflow: hidden; 
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .newsletter-form input { 
+            background: transparent; 
+            border: none; 
+            padding: 12px 20px; 
+            color: white; 
+            flex: 1; /* Changed from width:100% to flex:1 to prevent button squashing */
+            outline: none; 
+            font-family: 'Poppins', sans-serif;
+        }
+        .newsletter-form input::placeholder {
+            color: rgba(255,255,255,0.6); /* Lighter placeholder for dark background */
+        }
+        .newsletter-form button { 
+            background: var(--primary); 
+            border: none; 
+            color: white; 
+            padding: 0 25px; 
+            cursor: pointer; 
+            transition: 0.3s;
+            font-size: 16px;
+        }
+        .newsletter-form button:hover { background: white; color: var(--primary); }
+
+        @media (max-width: 768px) {
+            .page-title h1 { font-size: 2rem; }
+            .footer-container { grid-template-columns: 1fr; text-align: center; gap: 40px; }
+            .footer-socials { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-left">
+            <a href="index.html" class="icon-btn"><i class="fa-solid fa-arrow-left"></i></a> 
+            <a href="index.html" class="logo">
+                <img src="Untitled_design-removebg-preview.png" onerror="this.src='https://placehold.co/100x50/ff8fa3/white?text=HKC'" alt="Handcraft Kindness Creation" class="logo-img">
+            </a>
+        </div>
+        <div class="header-right"></div>
+    </header>
+
+    <div class="policy-container">
+        
+        <div class="page-title">
+            <h1>Transparency & Trust</h1>
+            <p>Learn more about our craft, values, and policies.</p>
+        </div>
+
+        <!-- 1. About Crochet Details -->
+        <div class="policy-card">
+            <h2><i class="fa-solid fa-yarn"></i> The Art of Crochet</h2>
+            <div class="policy-content">
+                <p>At <strong>Handcraft Kindness Creation</strong>, every single item is 100% handmade using the art of crochet. Unlike knitting which can be replicated by machines, <strong>crochet can only be done by human hands</strong>. This means every stitch, every loop, and every pattern you see is a result of hours of dedication, focus, and skill.</p>
+                <p>We use premium quality yarns—ranging from soft organic cotton for wearables to durable acrylic blends for toys—ensuring that our products are not only beautiful but also long-lasting and safe for all ages.</p>
+            </div>
+        </div>
+
+        <!-- 2. About Brand & Trust -->
+        <div class="policy-card">
+            <h2><i class="fa-solid fa-hand-holding-heart"></i> Our Promise of Trust</h2>
+            <div class="policy-content">
+                <p><strong>Handcraft Kindness Creation</strong> isn't just a brand; it's a commitment to quality and kindness. We believe in transparency with our customers.</p>
+                <ul>
+                    <li><strong>Authenticity:</strong> What you see is what you get. Our photos represent the true colors and textures of our work.</li>
+                    <li><strong>Hygiene:</strong> All items are crafted in a clean, smoke-free, and pet-free environment.</li>
+                    <li><strong>Secure Payments:</strong> We use trusted payment gateways and secure UPI methods to ensure your financial safety.</li>
+                </ul>
+                <p>Your trust is our most valuable asset, and we work hard to earn it with every package we ship.</p>
+            </div>
+        </div>
+
+        <!-- 3. No Return Policy -->
+        <div class="policy-card">
+            <h2><i class="fa-solid fa-ban"></i> Return & Exchange Policy</h2>
+            <div class="policy-content">
+                <p>We take great pride in the quality of our handmade items. Each piece is inspected thoroughly before shipping to ensure it meets our high standards.</p>
+                
+                <p><strong>Please note the following regarding Returns and Exchanges:</strong></p>
+                
+                <div class="alert-box">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                    <div>
+                        <strong>No Returns or Exchanges Policy:</strong><br>
+                        Due to the handmade and often customized nature of our products, <strong>we do not accept returns or exchanges</strong>. All sales are final.
+                    </div>
+                </div>
+
+                <p style="margin-top: 15px;">We encourage you to read the product descriptions carefully and check the size guides before placing an order. </p>
+                <p><em>Exception:</em> In the rare event that you receive a damaged or incorrect item, please contact us within 24 hours of delivery with an unboxing video, and we will do our best to resolve the issue.</p>
+            </div>
+        </div>
+
+        <!-- 4. Privacy Details -->
+        <div class="policy-card">
+            <h2><i class="fa-solid fa-user-shield"></i> Privacy Policy</h2>
+            <div class="policy-content">
+                <p>We respect your privacy. Any personal information (name, address, phone number) collected during the order process is used solely for shipping and communicating about your order. We do not sell or share your data with third parties.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-col brand-col">
+                <a href="#" class="footer-logo">Handcraft Kindness Creation</a>
+                <p class="brand-desc">Handcrafted with premium materials, sustainability, and endless love. Making the world softer, one stitch at a time.</p>
+                <div class="footer-socials">
+                    <a href="https://www.instagram.com/handcraft25_kindness?igsh=MXNzYnNiZzAzbjg1aw==" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://www.facebook.com/share/1Bwh2juEim/" target="_blank"><i class="fa-brands fa-facebook-f"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Shop</h4>
+                <ul class="footer-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="all_products.html">All Products</a></li>
+                    <li><a href="cart.html">My Cart</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Customer Care</h4>
+                <ul class="footer-links">
+                    <li><a href="privacy.html" style="color: var(--primary);">Privacy & Policy</a></li>
+                    <li><a href="#">Shipping Policy</a></li>
+                    <li><a href="contact.html">Contact Us</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Stay in the Loop</h4>
+                <p class="newsletter-text">Subscribe for exclusive updates & discounts.</p>
+                <form class="newsletter-form" onsubmit="event.preventDefault(); alert('Subscribed!');">
+                    <input type="email" placeholder="Your email address" required>
+                    <button type="submit"><i class="fa-solid fa-paper-plane"></i></button>
+                </form>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Handcraft Kindness Creation. All rights reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

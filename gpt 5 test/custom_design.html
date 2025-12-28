@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Connect on WhatsApp - Handcraft Kindness Creation</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&family=Great+Vibes&display=swap" rel="stylesheet">
+
+    <style>
+        /* ========================================= */
+        /* --- GLOBAL & SHARED STYLES --- */
+        /* ========================================= */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        html {
+            height: -webkit-fill-available; /* Fix for iOS Safari height */
+        }
+
+        body {
+            margin: 0; padding: 0; font-family: 'Poppins', sans-serif;
+            background-color: #f9f9f9; color: #333;
+            min-height: 100vh; 
+            min-height: -webkit-fill-available;
+            display: flex; flex-direction: column;
+        }
+
+        /* HEADER */
+        header {
+            background: linear-gradient(135deg, #ff9a9e 0%, #ff8fa3 100%);
+            color: white; 
+            /* Handle iPhone Notch/Status Bar */
+            padding: max(10px, env(safe-area-inset-top)) 15px 10px 15px;
+            height: auto; min-height: 70px;
+            display: flex; align-items: center; justify-content: space-between;
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+            box-shadow: 0 4px 15px rgba(255, 143, 163, 0.3);
+        }
+        .header-left { display: flex; align-items: center; gap: 10px; }
+        .icon-btn { background: transparent; border: none; color: white; font-size: 20px; cursor: pointer; padding: 5px; display: flex; align-items: center; justify-content: center; text-decoration: none; }
+        
+        /* Updated Logo Styles */
+        .logo { font-size: 24px; font-family: 'Great Vibes', cursive; color: white; text-decoration: none; display: flex; align-items: center; }
+        .logo-img { height: 50px; width: auto; object-fit: contain; }
+
+        /* PROGRESS BAR */
+        .progress-container {
+            max-width: 500px; 
+            /* Adjust margin to account for dynamic header height + safe area */
+            margin: calc(80px + env(safe-area-inset-top)) auto 20px auto; 
+            width: 100%;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px;
+        }
+        .step {
+            display: flex; flex-direction: column; align-items: center; gap: 5px;
+            color: #ccc; font-size: 12px; position: relative; z-index: 2;
+        }
+        .step i {
+            width: 30px; height: 30px; border-radius: 50%; background: #eee;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px; transition: 0.3s;
+        }
+        .line { flex: 1; height: 2px; background: #eee; margin: 0 5px; margin-bottom: 20px; z-index: 1; }
+        
+        .step.active i, .step.completed i { background: #333; color: white; }
+        .step.active .step-label, .step.completed .step-label { color: #333; font-weight: 600; }
+        .line.completed { background: #333; }
+
+        /* ========================================= */
+        /* --- MAIN CONTENT --- */
+        /* ========================================= */
+        .content-wrapper {
+            max-width: 500px; width: 95%; margin: 0 auto;
+            flex: 1; display: flex; flex-direction: column; align-items: center;
+            /* Ensure bottom content isn't covered by home bar */
+            padding-bottom: calc(20px + env(safe-area-inset-bottom));
+        }
+
+        /* CARD STYLE */
+        .action-card {
+            background: white; padding: 30px 25px; border-radius: 20px;
+            border: 1px solid #eee; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            width: 100%; text-align: center;
+        }
+
+        h2 { margin: 0 0 10px 0; color: #333; font-size: 22px; }
+        p { color: #666; font-size: 14px; line-height: 1.5; margin-bottom: 25px; }
+
+        /* INPUTS */
+        .input-group { text-align: left; margin-bottom: 20px; }
+        .input-group label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 8px; color: #555; }
+        .whatsapp-input-wrap {
+            position: relative;
+        }
+        .whatsapp-input-wrap i {
+            position: absolute; left: 15px; top: 50%; transform: translateY(-50%);
+            color: #25D366; font-size: 18px;
+        }
+        input[type="tel"] {
+            width: 100%; padding: 15px 15px 15px 45px;
+            border: 2px solid #eee; border-radius: 12px;
+            /* 16px prevents iOS zoom on focus */
+            font-size: 16px; outline: none; transition: 0.3s;
+            font-family: 'Poppins', sans-serif;
+            appearance: none;         /* Standard property */
+            -webkit-appearance: none; /* Remove default iOS styles */
+        }
+        input[type="tel"]:focus { border-color: #25D366; background: #f0fdf4; }
+
+        /* BUTTONS */
+        .primary-btn {
+            background: #25D366; color: white; border: none;
+            width: 100%; padding: 16px; border-radius: 12px;
+            font-size: 16px; font-weight: 600; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+            transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .primary-btn:hover { background: #1ebc57; transform: translateY(-2px); }
+
+        .disclaimer {
+            font-size: 12px; color: #888; margin-top: 15px; display: block;
+        }
+
+        /* ========================================= */
+        /* --- SUCCESS STATE --- */
+        /* ========================================= */
+        .success-container {
+            display: none; /* Hidden by default */
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+            width: 100%;
+        }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .success-icon {
+            width: 80px; height: 80px; background: #dcfce7; color: #22c55e;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 40px; margin: 0 auto 20px auto;
+            box-shadow: 0 0 0 10px #f0fdf4;
+        }
+
+        .order-id-box {
+            background: #f8fafc; border: 2px dashed #cbd5e1;
+            padding: 15px; border-radius: 10px; margin: 20px 0;
+            font-family: monospace; font-size: 24px; letter-spacing: 2px;
+            color: #334155; font-weight: 700;
+        }
+
+        .home-btn {
+            background: #333; color: white; text-decoration: none;
+            padding: 15px 30px; border-radius: 30px; display: inline-block;
+            margin-top: 20px; font-size: 14px; font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Small Mobile Adjustments */
+        @media (max-width: 400px) {
+            .logo { font-size: 18px; gap: 6px; } /* Reduce font size for small screens */
+            .logo-img { height: 32px; width: 32px; } /* Slightly smaller logo */
+            .action-card { padding: 25px 20px; }
+            h2 { font-size: 20px; }
+            .order-id-box { font-size: 20px; letter-spacing: 1px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-left">
+            <a href="custom_address.html" onclick="safeNavigate('custom_address.html'); return false;" class="icon-btn"><i class="fa-solid fa-arrow-left"></i></a> 
+            <a href="index.html" class="logo">
+                <img src="Untitled_design-removebg-preview.png" alt="Handcraft Kindness Creation" class="logo-img">
+            </a>
+        </div>
+    </header>
+
+    <div class="progress-container">
+        <div class="step completed"><i class="fa-solid fa-cloud-arrow-up"></i> <span class="step-label">Upload</span></div>
+        <div class="line completed"></div>
+        <div class="step completed"><i class="fa-solid fa-location-dot"></i> <span class="step-label">Address</span></div>
+        <div class="line completed"></div>
+        <div class="step active"><i class="fa-brands fa-whatsapp"></i> <span class="step-label">Contact</span></div>
+    </div>
+
+    <div class="content-wrapper">
+        
+        <!-- FORM SECTION -->
+        <div id="contactFormSection" class="action-card">
+            <h2>Final Step!</h2>
+            <p>To ensure your custom design is perfect, we need to discuss the details directly with you.</p>
+
+            <form onsubmit="event.preventDefault(); submitRequest();">
+                <div class="input-group">
+                    <label>Enter WhatsApp Number</label>
+                    <div class="whatsapp-input-wrap">
+                        <i class="fa-brands fa-whatsapp"></i>
+                        <input type="tel" id="whatsappNum" placeholder="e.g. 9876543210" required pattern="[0-9]{10}">
+                    </div>
+                </div>
+
+                <button type="submit" class="primary-btn">
+                    Connect Now <i class="fa-solid fa-paper-plane"></i>
+                </button>
+
+                <span class="disclaimer">
+                    <i class="fa-regular fa-clock"></i> Our team will contact you soon (under 24 hours).
+                </span>
+            </form>
+        </div>
+
+        <!-- SUCCESS SECTION -->
+        <div id="successSection" class="success-container">
+            <div class="action-card">
+                <div class="success-icon">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+                <h2>Congratulations!</h2>
+                <p>Your custom design request has been submitted successfully.</p>
+                
+                <div style="font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: 600;">Order ID</div>
+                <div class="order-id-box" id="displayOrderId">--------</div>
+                
+                <p style="font-size: 13px;">Our design team has received your details. We will message you on your provided WhatsApp number shortly to finalize the design and price.</p>
+
+                <a href="index.html" onclick="safeNavigate('index.html'); return false;" class="home-btn">Return to Home</a>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Init: prefill number if available from previous steps
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedAddr = localStorage.getItem('customUserAddress');
+            if(savedAddr) {
+                const data = JSON.parse(savedAddr);
+                if(data.phone) {
+                    document.getElementById('whatsappNum').value = data.phone;
+                }
+            }
+        });
+
+        // Safe Navigation Helper
+        function safeNavigate(url) {
+            try {
+                window.location.href = url;
+            } catch (e) {
+                console.warn("Navigation failed (likely due to preview environment):", e);
+                // Fallback attempt
+                window.location.assign(url);
+            }
+        }
+
+        function generateOrderId() {
+            const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            let result = '';
+            for (let i = 0; i < 8; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+
+        function submitRequest() {
+            const phone = document.getElementById('whatsappNum').value;
+            
+            // Generate Order ID
+            const newOrderId = generateOrderId();
+            
+            // Simulate saving to DB/LocalStorage
+            const orderData = {
+                id: newOrderId,
+                phone: phone,
+                date: new Date().toISOString(),
+                status: 'Pending Review'
+            };
+            
+            // You might want to append this to a list of orders
+            // const existingOrders = JSON.parse(localStorage.getItem('myOrders')) || [];
+            // existingOrders.push(orderData);
+            // localStorage.setItem('myOrders', JSON.stringify(existingOrders));
+
+            // UI Transition
+            document.getElementById('contactFormSection').style.display = 'none';
+            document.getElementById('successSection').style.display = 'block';
+            document.getElementById('displayOrderId').innerText = newOrderId;
+
+            // Optional: Trigger confetti or sound here if desired
+        }
+    </script>
+</body>
+</html>

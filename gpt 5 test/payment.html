@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Payment — Handcraft Kindness Creation</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
+
+  <!-- QR code lib (generates high-quality QR data URLs) -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+
+  <style>
+    :root{
+      --primary:#ff8fa3;
+      --accent:#ff9a9e;
+      --muted:#666;
+      --bg:#fff;
+      --card:#ffffff;
+      --shadow: 0 8px 30px rgba(0,0,0,0.03);
+      --success:#2ecc71;
+    }
+    *{box-sizing:border-box}
+    body{font-family:'Poppins',sans-serif;margin:0;padding-top:70px;background:#fbfbfb;color:#222}
+    header{position:fixed;top:0;left:0;right:0;height:70px;background:linear-gradient(135deg,var(--accent),var(--primary));display:flex;align-items:center;justify-content:space-between;padding:0 16px;color:#fff;z-index:1000}
+    
+    .logo{font-family:'Great Vibes',cursive;font-size:24px; color: white; text-decoration: none; display: flex; align-items: center;}
+    .logo-img{height: 50px; width: auto; object-fit: contain;}
+
+    main{max-width:1100px;margin:28px auto;padding:20px}
+    .card{background:var(--card);border-radius:12px;padding:18px;border:1px solid #f0f0f0;box-shadow:var(--shadow);margin-bottom:18px}
+    h2{margin:0 0 12px}
+    .muted{color:var(--muted);font-size:14px}
+    .flex{display:flex;gap:20px;align-items:flex-start}
+    .left{flex:1}
+    .right{width:340px}
+    .method-card{border:1px solid #f0f0f0;border-radius:12px;padding:14px;margin-bottom:12px;cursor:pointer;display:flex;gap:14px;align-items:center;background:linear-gradient(180deg, #fff, #fff);transition:0.18s}
+    .method-card:hover{transform:translateY(-4px)}
+    .method-card.active{border-color:var(--primary);box-shadow:0 8px 24px rgba(255,143,163,0.08)}
+    .method-icon{width:56px;height:56px;border-radius:10px;background:#faf6f7;display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--primary)}
+    .method-title{font-weight:700}
+    .method-sub{font-size:13px;color:var(--muted);margin-top:4px}
+
+    /* UPI area (no store image as requested) */
+    .upi-panel{display:flex;flex-direction:column;gap:12px;padding:14px;border-radius:12px;background:linear-gradient(90deg, rgba(255,142,163,0.04), rgba(255,154,158,0.02));border:1px solid rgba(255,142,163,0.04)}
+    .qr-wrap{display:flex;flex-direction:column;gap:12px;align-items:center}
+    .qr-image{width:300px;height:300px;border-radius:12px;border:8px solid #fff;background:#fff;display:flex;align-items:center;justify-content:center}
+    .qr-image img{width:100%;height:100%;object-fit:contain;border-radius:6px}
+    .qr-meta{font-size:14px;color:var(--muted);display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+    .timer{font-weight:700;color:var(--primary);font-size:15px;background:rgba(255,142,163,0.06);padding:6px 12px;border-radius:20px}
+
+    .pay-actions{display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap}
+    .btn{padding:12px 14px;border-radius:10px;border:none;font-weight:700;cursor:pointer}
+    .btn-primary{background:#222;color:#fff}
+    .btn-ghost{background:#fff;border:1px solid #ddd}
+    .small{font-size:13px;color:var(--muted)}
+
+    .info-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px dashed #f6f6f6}
+    .total-row{display:flex;justify-content:space-between;font-size:18px;font-weight:800;margin-top:12px}
+
+    .toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%);background:#333;color:#fff;padding:12px 18px;border-radius:20px;opacity:0;pointer-events:none;transition:0.25s;z-index:2000}
+    .toast.show{opacity:1;pointer-events:auto}
+
+    /* success modal */
+    .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 3000; }
+    .modal.show { display:flex; }
+    .modal-card { background: white; padding: 28px; border-radius: 12px; max-width: 480px; width: 94%; text-align: center; box-shadow:0 20px 40px rgba(0,0,0,0.18) }
+    .success-icon { width:72px;height:72px;border-radius:50%;background:var(--success);display:flex;align-items:center;justify-content:center;color:white;margin:0 auto 12px;font-size:28px }
+    .ordersummary { text-align:left;margin-top:12px }
+
+    @media(max-width:900px){
+      .flex{flex-direction:column}
+      .right{width:100%}
+      .qr-image{width:220px;height:220px}
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div style="display:flex;align-items:center;gap:12px">
+      <a href="summary.html" style="color:white;text-decoration:none;font-size:18px"><i class="fa-solid fa-arrow-left"></i></a>
+      <a href="index.html" class="logo">
+        <img src="Untitled_design-removebg-preview.png" onerror="this.src='https://placehold.co/100x50/ff8fa3/white?text=HKC'" alt="Handcraft Kindness Creation" class="logo-img">
+      </a>
+    </div>
+    <div></div>
+  </header>
+
+  <main>
+    <div class="card">
+      <h2>Payment</h2>
+      <p class="muted">Select a payment method. For UPI, scan the generated QR with your UPI app. QR expires after the timer — regenerate if needed.</p>
+    </div>
+
+    <div class="flex">
+      <div class="left">
+        <div class="card">
+          <h3 style="margin:0 0 12px">Choose Payment Method</h3>
+
+          <div id="upiCard" class="method-card" role="button" tabindex="0">
+            <div class="method-icon" aria-hidden><i class="fa-solid fa-qrcode"></i></div>
+            <div>
+              <div class="method-title">UPI (Scan QR)</div>
+              <div class="method-sub">Quick and secure UPI payment. UPI ID: <strong id="upiIdDisplay">8617087095-2@axl</strong></div>
+            </div>
+          </div>
+
+          <div id="codCard" class="method-card" role="button" tabindex="0">
+            <div class="method-icon" aria-hidden><i class="fa-solid fa-hand-holding-dollar"></i></div>
+            <div>
+              <div class="method-title">Cash on Delivery (COD)</div>
+              <div class="method-sub">Pay in cash when your order arrives. No online payment required.</div>
+            </div>
+          </div>
+
+          <!-- UPI panel (no image) -->
+          <div id="upiArea" style="display:none" class="card" aria-hidden>
+            <div class="upi-panel" aria-live="polite">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div style="font-weight:700">Pay using UPI</div>
+                <div class="timer" id="qrTimer" title="QR code expires">02:00</div>
+              </div>
+
+              <div class="qr-wrap" aria-hidden>
+                <div class="qr-image" id="qrContainer">
+                  <img id="qrImg" alt="UPI QR code" src="" />
+                </div>
+
+                <div class="qr-meta">
+                  <div>UPI ID: <strong id="upiIdText">8617087095-2@axl</strong></div>
+                  <div>Amount: <strong id="upiAmount">₹0</strong></div>
+                </div>
+
+                <div class="pay-actions">
+                  <!-- "I Have Paid" removed from visual flow: auto-detect payment when user returns from UPI app -->
+                  <button class="btn btn-ghost" id="regenQrBtn">Regenerate</button>
+                  <button class="btn btn-ghost" id="upiIntentBtn">Open in UPI app</button>
+                </div>
+
+                <div style="margin-top:8px" class="small">Transaction note will include a short order reference. After you open the UPI app, this page will detect when you return and complete the order automatically.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- COD panel -->
+          <div id="codArea" style="display:none" class="card" aria-hidden>
+            <div style="padding:8px 6px">
+              <p class="small">You will pay in cash when the delivery person arrives. Click below to confirm and place your order.</p>
+              <div style="margin-top:12px">
+                <button class="btn btn-primary" id="codPlaceBtn">Place Order (COD)</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="right">
+        <div class="card">
+          <h3 style="margin:0 0 12px">Order Summary</h3>
+
+          <div class="info-row"><span>Subtotal</span><strong id="sumSubtotal">₹0</strong></div>
+          <div class="info-row"><span>Delivery</span><strong id="sumDelivery">FREE</strong></div>
+          <div class="info-row"><span>Discount</span><strong id="sumDiscount">₹0</strong></div>
+
+          <div class="total-row"><span>Total Payable</span><strong id="sumTotal">₹0</strong></div>
+
+          <div style="margin-top:12px" class="small">UPI ID: <strong>8617087095-2@axl</strong></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <!-- Success Modal -->
+  <div id="successModal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-card" role="document">
+      <div class="success-icon" aria-hidden><i class="fa-solid fa-check"></i></div>
+      <h3 id="successTitle">Congratulations!</h3>
+      <p id="successMsg">Your payment is completed.</p>
+
+      <div class="ordersummary" id="orderSummaryBlock" style="display:none">
+        <p><strong>Order ID:</strong> <span id="orderIdText"></span></p>
+        <p><strong>Amount:</strong> ₹<span id="orderAmountText"></span></p>
+        <p class="small">Thank you for shopping with Handcraft Kindness Creation.</p>
+      </div>
+
+      <div style="margin-top:16px">
+        <button class="btn btn-primary" onclick="closeModal()">Continue Shopping</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // LocalStorage keys
+    const CART_KEY = 'myCrochetCart';
+    const ADDR_KEY = 'userAddress';
+    const ORDER_DETAILS_KEYS = ['currentOrderDetails','checkoutSummary','checkoutSummaryV2','checkoutSummary'];
+    const UPI_ID = '8617087095-2@axl';
+    const STORE_NAME = 'Handcraft Kindness Creation';
+
+    // Elements
+    const upiCard = document.getElementById('upiCard');
+    const codCard = document.getElementById('codCard');
+    const upiArea = document.getElementById('upiArea');
+    const codArea = document.getElementById('codArea');
+    const qrImg = document.getElementById('qrImg');
+    const qrContainer = document.getElementById('qrContainer');
+    const upiAmountEl = document.getElementById('upiAmount');
+    const upiIdText = document.getElementById('upiIdText');
+    const upiIdDisplay = document.getElementById('upiIdDisplay');
+    const upiIntentBtn = document.getElementById('upiIntentBtn');
+    const regenQrBtn = document.getElementById('regenQrBtn');
+    const qrTimerEl = document.getElementById('qrTimer');
+
+    const sumSubtotal = document.getElementById('sumSubtotal');
+    const sumDelivery = document.getElementById('sumDelivery');
+    const sumDiscount = document.getElementById('sumDiscount');
+    const sumTotal = document.getElementById('sumTotal');
+
+    const codPlaceBtn = document.getElementById('codPlaceBtn');
+
+    const toastEl = document.getElementById('toast');
+    const successModal = document.getElementById('successModal');
+    const orderIdText = document.getElementById('orderIdText');
+    const orderAmountText = document.getElementById('orderAmountText');
+    const orderSummaryBlock = document.getElementById('orderSummaryBlock');
+    const successMsg = document.getElementById('successMsg');
+
+    // State
+    let orderDetails = null;
+    let qrExpireSeconds = 120; // 2 minutes
+    let qrTimerInterval = null;
+    let currentUpiUri = null;
+    let currentOrderReference = null;
+    let awaitingPayment = false;
+    let visibilityListenerAttached = false;
+
+    // Helpers
+    function formatINR(n) { return '₹' + Number(n || 0).toLocaleString(); }
+    function showToast(msg, ms = 3000) {
+      toastEl.innerText = msg;
+      toastEl.classList.add('show');
+      setTimeout(()=> toastEl.classList.remove('show'), ms);
+    }
+    function generateOrderReference() {
+      const ts = Date.now().toString().slice(-6);
+      const rnd = Math.random().toString(36).slice(2,5).toUpperCase();
+      return 'REF' + ts + rnd;
+    }
+    function buildUpiUri({ pa, pn, am, tn, cu = 'INR' }) {
+      let uri = `upi://pay?pa=${encodeURIComponent(pa)}&pn=${encodeURIComponent(pn)}&am=${encodeURIComponent(am)}&cu=${encodeURIComponent(cu)}`;
+      if (tn) uri += `&tn=${encodeURIComponent(tn)}`;
+      return uri;
+    }
+    async function renderQrFromUri(uri) {
+      try {
+        const opts = { errorCorrectionLevel: 'M', type: 'image/png', margin: 1, scale: 8, color: { dark: '#111111', light: '#ffffff' } };
+        const dataUrl = await QRCode.toDataURL(uri, opts);
+        qrImg.src = dataUrl;
+        currentUpiUri = uri;
+      } catch (err) {
+        console.error('QR generation failed', err);
+        showToast('Unable to generate QR. Try regenerate.');
+      }
+    }
+    function updateTimerDisplay(sec) {
+      const m = Math.floor(sec / 60).toString().padStart(2,'0');
+      const s = (sec % 60).toString().padStart(2,'0');
+      qrTimerEl.innerText = `${m}:${s}`;
+    }
+    function clearQrTimer(){ if (qrTimerInterval) { clearInterval(qrTimerInterval); qrTimerInterval = null; } }
+    function markQrExpired() {
+      qrImg.src = '';
+      qrImg.alt = 'QR expired';
+      qrContainer.style.filter = 'grayscale(0.7) opacity(0.7)';
+      showToast('QR expired — please regenerate.');
+      awaitingPayment = false;
+    }
+    function startQrTimer(seconds = qrExpireSeconds) {
+      clearQrTimer();
+      let remaining = seconds;
+      updateTimerDisplay(remaining);
+      qrTimerInterval = setInterval(() => {
+        remaining--;
+        updateTimerDisplay(remaining);
+        if (remaining <= 0) {
+          clearQrTimer();
+          markQrExpired();
+        }
+      }, 1000);
+    }
+
+    function getOrderDetails() {
+      for (const k of ORDER_DETAILS_KEYS) {
+        const raw = localStorage.getItem(k);
+        if (raw) {
+          try { return JSON.parse(raw); } catch(e){ continue; }
+        }
+      }
+      // fallback compute from cart
+      const cart = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
+      if (!cart || cart.length === 0) return null;
+      const subtotal = cart.reduce((s,i) => s + (i.price * (i.qty||1)), 0);
+      return { subtotal, deliveryCost: 0, grandTotal: subtotal };
+    }
+
+    // Regenerate QR (creates UPI URI with current amount and unique note)
+    async function regenerateQr() {
+      currentOrderReference = generateOrderReference();
+      const amount = Number(orderDetails.grandTotal || orderDetails.subtotal || 0).toFixed(2);
+      const tn = `Order:${currentOrderReference}`;
+      const uri = buildUpiUri({ pa: UPI_ID, pn: STORE_NAME, am: amount, tn });
+      await renderQrFromUri(uri);
+      qrContainer.style.filter = '';
+      startQrTimer(qrExpireSeconds);
+      showToast('New QR generated. Expires in 2:00.');
+      upiIntentBtn.onclick = () => openUpiUri(uri);
+      upiAmountEl.innerText = formatINR(amount);
+    }
+
+    // Open UPI app via URI and start awaiting detection on return
+    function openUpiUri(uri) {
+      try {
+        // For mobile, this should open the UPI app. We set awaitingPayment and rely on visibilitychange to detect return.
+        awaitingPayment = true;
+        attachVisibilityListener();
+        // Use window.location to trigger the intent
+        window.location.href = uri;
+        // Fallback: in some browsers the redirect is blocked — still set awaitingPayment and wait for user to come back
+        showToast('UPI app opened (if supported). Return to this page after completing payment.');
+      } catch (e) {
+        console.error(e);
+        showToast('Could not open UPI app. Please scan the QR manually.');
+      }
+    }
+
+    // Finalize order
+    function finalizeOrder(method, paid = false) {
+      awaitingPayment = false;
+      clearQrTimer();
+      const ts = Date.now();
+      const rand = Math.random().toString(36).slice(2,6).toUpperCase();
+      const orderId = 'HKC' + ts.toString().slice(-6) + rand;
+
+      const cart = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
+      const address = JSON.parse(localStorage.getItem(ADDR_KEY) || 'null');
+      const amount = Number(orderDetails.grandTotal || orderDetails.subtotal || 0);
+
+      const order = {
+        id: orderId,
+        method: method,
+        paid: !!paid,
+        amount: amount,
+        reference: currentOrderReference || null,
+        items: cart,
+        address: address,
+        timestamp: new Date().toISOString()
+      };
+
+      const ordersKey = 'myOrders';
+      const prev = JSON.parse(localStorage.getItem(ordersKey) || '[]');
+      prev.unshift(order);
+      localStorage.setItem(ordersKey, JSON.stringify(prev));
+
+      // clear checkout state
+      localStorage.removeItem(CART_KEY);
+      for (const k of ORDER_DETAILS_KEYS) localStorage.removeItem(k);
+      localStorage.removeItem(ADDR_KEY);
+
+      // show confirmation and auto-close
+      showToast(`Order placed — ID ${orderId}`, 4000);
+      orderIdText.innerText = orderId;
+      orderAmountText.innerText = amount.toFixed(2);
+      orderSummaryBlock.style.display = 'block';
+      successModal.classList.add('show');
+      successModal.setAttribute('aria-hidden','false');
+
+      // Attempt to close this window/tab (works if opened by script), otherwise redirect home after short delay
+      setTimeout(() => {
+        try { window.close(); } catch (e) { /* ignore */ }
+        // fallback redirect
+        setTimeout(() => { window.location.href = 'index.html'; }, 700);
+      }, 1200);
+    }
+
+    // Visibility change detection to auto-complete when user returns from UPI app
+    function onVisibilityChange() {
+      if (!visibilityListenerAttached) return;
+      if (!document.hidden && awaitingPayment) {
+        // User returned to page — treat as completed (best-effort)
+        showToast('Returned to browser — completing order...');
+        setTimeout(() => finalizeOrder('UPI', true), 900);
+      }
+    }
+
+    function attachVisibilityListener() {
+      if (visibilityListenerAttached) return;
+      document.addEventListener('visibilitychange', onVisibilityChange);
+      visibilityListenerAttached = true;
+    }
+
+    // Handlers attach
+    document.addEventListener('DOMContentLoaded', async () => {
+      orderDetails = getOrderDetails();
+      if (!orderDetails) {
+        alert('No order found. Redirecting to cart.');
+        window.location.href = 'cart.html';
+        return;
+      }
+
+      // populate summary
+      sumSubtotal.innerText = formatINR(orderDetails.subtotal || orderDetails.grandTotal || 0);
+      sumDelivery.innerText = (orderDetails.deliveryCost && orderDetails.deliveryCost > 0) ? formatINR(orderDetails.deliveryCost) : 'FREE';
+      sumDiscount.innerText = '₹0';
+      sumTotal.innerText = formatINR(orderDetails.grandTotal || orderDetails.subtotal || 0);
+
+      // set up UI
+      upiIdText.innerText = UPI_ID;
+      upiIdDisplay.innerText = UPI_ID;
+
+      // default to UPI
+      selectMethod('UPI');
+
+      // click handlers
+      upiCard.addEventListener('click', () => selectMethod('UPI'));
+      codCard.addEventListener('click', () => selectMethod('COD'));
+      regenQrBtn.addEventListener('click', regenerateQr);
+
+      upiIntentBtn.addEventListener('click', () => {
+        if (currentUpiUri) openUpiUri(currentUpiUri);
+      });
+
+      codPlaceBtn.addEventListener('click', () => {
+        showToast('Placing COD order...');
+        setTimeout(() => finalizeOrder('COD', false), 800);
+      });
+    });
+
+    function selectMethod(m) {
+      if (m === 'UPI') {
+        upiCard.classList.add('active');
+        codCard.classList.remove('active');
+        upiArea.style.display = 'block';
+        codArea.style.display = 'none';
+        regenerateQr();
+      } else {
+        codCard.classList.add('active');
+        upiCard.classList.remove('active');
+        upiArea.style.display = 'none';
+        codArea.style.display = 'block';
+        clearQrTimer();
+        awaitingPayment = false;
+      }
+    }
+
+    // Close modal
+    function closeModal() {
+      successModal.classList.remove('show');
+      successModal.setAttribute('aria-hidden','true');
+      window.location.href = 'index.html';
+    }
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && successModal.classList.contains('show')) closeModal();
+    });
+  </script>
+</body>
+</html>

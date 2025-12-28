@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Order Summary - Handcraft Kindness Creation</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&family=Great+Vibes&display=swap" rel="stylesheet">
+
+    <style>
+        /* ========================================= */
+        /* --- GLOBAL --- */
+        /* ========================================= */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html, body {
+            margin: 0; padding: 0; font-family: 'Poppins', sans-serif;
+            background-color: #f9f9f9; color: #333;
+        }
+
+        /* HEADER */
+        header {
+            background: linear-gradient(135deg, #ff9a9e 0%, #ff8fa3 100%);
+            color: white; height: 70px; padding: 0 15px;
+            display: flex; align-items: center; justify-content: space-between;
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+            box-shadow: 0 4px 15px rgba(255, 143, 163, 0.3);
+        }
+        .header-left { display: flex; align-items: center; gap: 10px; }
+        .icon-btn { background: transparent; border: none; color: white; font-size: 20px; cursor: pointer; padding: 5px; display: flex; align-items: center; justify-content: center; text-decoration: none; }
+        
+        /* Logo Styles */
+        .logo { font-size: 24px; font-family: 'Great Vibes', cursive; color: white; text-decoration: none; display: flex; align-items: center; }
+        .logo-img { height: 50px; width: auto; object-fit: contain; }
+
+        /* ========================================= */
+        /* --- PROGRESS BAR (Consistent with Step 3) --- */
+        /* ========================================= */
+        .progress-container {
+            max-width: 700px; margin: 90px auto 30px auto;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 15px;
+        }
+        .step {
+            display: flex; flex-direction: column; align-items: center; gap: 5px;
+            color: #ccc; font-size: 13px; position: relative; z-index: 2;
+        }
+        .step i {
+            width: 32px; height: 32px; border-radius: 50%; background: #eee;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; transition: 0.3s;
+        }
+        .line { flex: 1; height: 2px; background: #eee; margin: 0 5px; margin-bottom: 20px; z-index: 1; }
+        /* Active States */
+        .step.active i, .step.completed i { background: #333; color: white; }
+        .step.active .step-label, .step.completed .step-label { color: #333; font-weight: 600; }
+        .line.completed { background: #333; }
+
+        /* ========================================= */
+        /* --- LAYOUT --- */
+        /* ========================================= */
+        .summary-wrapper {
+            max-width: 1100px; width: 95%; margin: 0 auto 100px auto;
+            display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; align-items: start;
+        }
+
+        /* ========================================= */
+        /* --- REVIEW CARDS (LEFT) --- */
+        /* ========================================= */
+        .review-card {
+            background: white; border-radius: 12px; padding: 20px;
+            border: 1px solid #eee; margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+
+        .card-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 15px; border-bottom: 1px solid #f5f5f5; padding-bottom: 10px;
+        }
+        .card-header h3 { margin: 0; font-size: 16px; font-weight: 700; color: #333; }
+        .edit-link {
+            font-size: 13px; color: #ff8fa3; font-weight: 600; text-decoration: none;
+            border: 1px solid #ff8fa3; padding: 4px 12px; border-radius: 20px;
+            transition: 0.2s;
+        }
+        .edit-link:hover { background: #fff0f3; }
+
+        /* Address Details */
+        .address-details h4 { margin: 0 0 5px 0; font-size: 15px; display: flex; align-items: center; gap: 8px; }
+        .tag {
+            font-size: 11px; padding: 2px 6px; border-radius: 4px; text-transform: uppercase;
+        }
+        .tag.home { background: #e3f2fd; color: #1976d2; }
+        .tag.office { background: #fff3e0; color: #e65100; }
+        
+        .address-details p { margin: 0; font-size: 13px; color: #666; line-height: 1.5; }
+        .contact-info { margin-top: 5px !important; color: #333 !important; font-weight: 500; }
+
+        /* Order Items */
+        .items-list { display: flex; flex-direction: column; gap: 15px; }
+        .order-item { display: flex; gap: 15px; align-items: center; border-bottom: 1px solid #f9f9f9; padding-bottom: 10px; }
+        .order-item:last-child { border-bottom: none; padding-bottom: 0; }
+
+        .item-img {
+            width: 65px; height: 65px; border-radius: 8px; overflow: hidden;
+            position: relative; border: 1px solid #eee; background: #f9f9f9; flex-shrink: 0;
+        }
+        .item-img img { width: 100%; height: 100%; object-fit: contain; }
+        .badge-qty {
+            position: absolute; bottom: 0; right: 0; background: rgba(0,0,0,0.6);
+            color: white; font-size: 10px; padding: 2px 5px; border-radius: 6px 0 0 0;
+        }
+
+        .item-text h4 { margin: 0; font-size: 14px; font-weight: 600; }
+        .variant { margin: 3px 0; font-size: 12px; color: #888; }
+        .current-price { font-weight: 700; font-size: 14px; }
+
+        /* Delivery Info */
+        .delivery-info {
+            display: flex; align-items: center; gap: 15px; background: #fafafa;
+            padding: 10px; border-radius: 8px; border: 1px dashed #ddd;
+        }
+        .truck-icon {
+            width: 40px; height: 40px; background: white; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: #333; border: 1px solid #eee;
+        }
+        .delivery-text { flex: 1; display: flex; flex-direction: column; }
+        .method-name { font-size: 14px; font-weight: 600; }
+        .method-eta { font-size: 12px; color: #2ecc71; }
+        .method-cost { font-weight: 700; font-size: 14px; }
+        .method-cost.green { color: #2ecc71; }
+
+        /* ========================================= */
+        /* --- BILL BOX (RIGHT) --- */
+        /* ========================================= */
+        .bill-box {
+            background: white; padding: 25px; border-radius: 12px;
+            border: 1px solid #eee; position: sticky; top: 100px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.03);
+        }
+        .bill-box h3 { margin-top: 0; font-size: 16px; margin-bottom: 20px; }
+
+        .bill-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; color: #555; }
+        .green { color: #2ecc71; }
+        .total { font-size: 18px; font-weight: 700; color: #333; margin-top: 15px; }
+        .divider { height: 1px; background: #eee; margin: 15px 0; }
+
+        .pay-btn {
+            width: 100%; background: #333; color: white; padding: 15px;
+            border: none; border-radius: 10px; font-size: 16px; font-weight: 600;
+            cursor: pointer; margin-top: 20px; transition: 0.2s;
+            display: block; text-align: center; text-decoration: none;
+        }
+        .pay-btn:hover { background: #ff8fa3; box-shadow: 0 5px 15px rgba(255,143,163,0.4); }
+
+        .security-msg {
+            text-align: center; font-size: 12px; color: #aaa; margin-top: 15px;
+            display: flex; align-items: center; justify-content: center; gap: 5px;
+        }
+
+        /* ========================================= */
+        /* --- MOBILE RESPONSIVE --- */
+        /* ========================================= */
+        @media (max-width: 768px) {
+            .progress-container { margin-top: 80px; }
+            .summary-wrapper { grid-template-columns: 1fr; gap: 20px; margin-bottom: 80px; }
+            
+            .bill-box {
+                position: static; border: none; background: transparent; padding: 0; box-shadow: none;
+            }
+            .bill-box h3, .security-msg { display: none; } /* Simplify on mobile */
+            
+            /* Make the Bill Rows look like a card on mobile */
+            .bill-box-inner {
+                background: white; padding: 20px; border-radius: 12px; border: 1px solid #eee;
+            }
+
+            /* Sticky Bottom Button */
+            .pay-btn {
+                position: fixed; bottom: 0; left: 0; width: 100%; margin: 0;
+                border-radius: 15px 15px 0 0; padding: 18px; z-index: 100;
+                box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-left">
+            <a href="address.html" onclick="safeNavigate('address.html'); return false;" class="icon-btn"><i class="fa-solid fa-arrow-left"></i></a> 
+            <a href="index.html" onclick="safeNavigate('index.html'); return false;" class="logo">
+                <img src="Untitled_design-removebg-preview.png" onerror="this.src='https://placehold.co/100x50/ff8fa3/white?text=HKC'" alt="Handcraft Kindness Creation" class="logo-img">
+            </a>
+        </div>
+    </header>
+
+    <div class="progress-container">
+        <div class="step completed"><i class="fa-solid fa-bag-shopping"></i> <span class="step-label">Bag</span></div>
+        <div class="line completed"></div>
+        <div class="step completed"><i class="fa-solid fa-location-dot"></i> <span class="step-label">Address</span></div>
+        <div class="line completed"></div>
+        <div class="step active"><i class="fa-solid fa-list-check"></i> <span class="step-label">Summary</span></div>
+        <div class="line"></div>
+        <div class="step"><i class="fa-regular fa-credit-card"></i> <span class="step-label">Payment</span></div>
+    </div>
+
+    <div class="summary-wrapper">
+        
+        <div class="summary-left">
+           <div class="review-card">
+                <div class="address-details" id="addressDisplay">
+                    <!-- Populated via JS -->
+                    <h4>Loading...</h4>
+                </div>
+           </div>
+
+            <div class="review-card">
+                <div class="card-header">
+                    <h3>Your Order</h3>
+                    <a href="cart.html" onclick="safeNavigate('cart.html'); return false;" class="edit-link">Edit Bag</a>
+                </div>
+                
+                <div class="items-list" id="itemsList">
+                    <!-- Items populated via JS -->
+                </div>
+            </div>
+
+            <div class="review-card">
+                <div class="card-header">
+                    <h3>Delivery Method</h3>
+                </div>
+                <div class="delivery-info">
+                    <div class="truck-icon"><i class="fa-solid fa-truck-fast"></i></div>
+                    <div class="delivery-text">
+                        <span class="method-name" id="deliveryMethodName">Standard Delivery</span>
+                        <span class="method-eta" id="deliveryMethodEta">Expected by <strong>5-7 Days</strong></span>
+                    </div>
+                    <span class="method-cost" id="deliveryMethodCost">FREE</span>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="summary-right">
+            <div class="bill-box">
+                <div class="bill-box-inner">
+                    <h3>Price Details</h3>
+                    
+                    <div class="bill-row">
+                        <span>Subtotal</span>
+                        <span id="summSubtotal">₹0</span>
+                    </div>
+                    <div class="bill-row">
+                        <span>Discount</span>
+                        <span class="green">₹0</span>
+                    </div>
+                    <div class="bill-row">
+                        <span>Delivery Fee</span>
+                        <span id="summDelivery">FREE</span>
+                    </div>
+                    
+                    <div class="divider"></div>
+                    
+                    <div class="bill-row total">
+                        <span>Total Payable</span>
+                        <span id="summTotal">₹0</span>
+                    </div>
+
+                    <button class="pay-btn" onclick="proceedToPayment()">
+                        Proceed to Payment
+                    </button>
+
+                    <div class="security-msg">
+                        <i class="fa-solid fa-shield-halved"></i> Secure Payment
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Constants
+        const CART_KEY = 'myCrochetCart';
+        const AUTH_KEY = 'isLoggedIn';
+        const ADDR_KEY = 'userAddress';
+        const ORDER_DETAILS_KEY = 'currentOrderDetails';
+
+        // Safe Navigation Helper
+        function safeNavigate(url) {
+            try {
+                window.location.href = url;
+            } catch (e) {
+                console.warn("Navigation failed:", e);
+                alert("Redirecting to: " + url);
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+            checkDataIntegrity();
+            renderAddress();
+            renderItems();
+            renderTotals();
+        });
+
+        // 1. Auth Check
+        function checkAuth() {
+            const isLoggedIn = localStorage.getItem(AUTH_KEY) === 'true';
+            if (!isLoggedIn) {
+                safeNavigate('login.html?redirect=' + encodeURIComponent('summary.html'));
+            }
+        }
+
+        // 2. Data Check
+        function checkDataIntegrity() {
+            const address = localStorage.getItem(ADDR_KEY);
+            const orderDetails = localStorage.getItem(ORDER_DETAILS_KEY);
+            
+            if(!address) {
+                // No address, go back
+                safeNavigate('address.html');
+                return;
+            }
+            if(!orderDetails) {
+                // No order details, go back to cart
+                safeNavigate('cart.html');
+                return;
+            }
+        }
+
+        // 3. Render Address
+        function renderAddress() {
+            const addr = JSON.parse(localStorage.getItem(ADDR_KEY));
+            if (!addr) return;
+
+            const type = addr.address_type || 'Home';
+            const typeClass = type.toLowerCase() === 'office' ? 'office' : 'home';
+
+            const html = `
+                <h4>${addr.fullname} <span class="tag ${typeClass}">${type}</span></h4>
+                <p>${addr.address}</p>
+                <p>${addr.city}, ${addr.state} - ${addr.zipcode}</p>
+                <p class="contact-info">
+                    <span>📞 +91 ${addr.phone}</span>
+                </p>
+            `;
+            document.getElementById('addressDisplay').innerHTML = html;
+        }
+
+        // 4. Render Items
+        function renderItems() {
+            const cart = JSON.parse(localStorage.getItem(CART_KEY)) || [];
+            const container = document.getElementById('itemsList');
+            container.innerHTML = '';
+
+            cart.forEach(item => {
+                const totalItemPrice = (item.price || 0) * (item.qty || 1);
+                const html = `
+                    <div class="order-item">
+                        <div class="item-img">
+                            <img src="${item.img}" alt="${item.title}" onerror="this.src='https://placehold.co/100?text=Product'">
+                            <span class="badge-qty">x${item.qty}</span>
+                        </div>
+                        <div class="item-text">
+                            <h4>${item.title}</h4>
+                            <p class="variant">Handmade | Premium</p>
+                            <div class="price-box">
+                                <span class="current-price">₹${totalItemPrice.toLocaleString()}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += html;
+            });
+        }
+
+        // 5. Render Totals
+        function renderTotals() {
+            const details = JSON.parse(localStorage.getItem(ORDER_DETAILS_KEY));
+            if(!details) return;
+
+            document.getElementById('summSubtotal').innerText = '₹' + details.subtotal.toLocaleString();
+            
+            const delCostEl = document.getElementById('summDelivery');
+            const delMethodName = document.getElementById('deliveryMethodName');
+            const delMethodEta = document.getElementById('deliveryMethodEta');
+            const delMethodCost = document.getElementById('deliveryMethodCost');
+
+            if (details.deliveryCost === 0) {
+                delCostEl.innerText = "FREE";
+                delCostEl.className = "green";
+                
+                delMethodName.innerText = "Standard Delivery";
+                delMethodEta.innerHTML = "Expected by <strong>5-7 Days</strong>";
+                delMethodCost.innerText = "FREE";
+                delMethodCost.className = "method-cost green";
+            } else {
+                delCostEl.innerText = '₹' + details.deliveryCost;
+                delCostEl.className = "";
+                
+                delMethodName.innerText = "Express Delivery";
+                delMethodEta.innerHTML = "Expected by <strong>Tomorrow</strong>";
+                delMethodCost.innerText = '₹' + details.deliveryCost;
+                delMethodCost.className = "method-cost";
+            }
+
+            document.getElementById('summTotal').innerText = '₹' + details.grandTotal.toLocaleString();
+        }
+
+        // 6. Proceed
+        function proceedToPayment() {
+            safeNavigate('payment.html');
+        }
+    </script>
+</body>
+</html>
